@@ -9,6 +9,8 @@
     <meta charset="utf-8" />
     <title>Mi Perfil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <style>
         body {
             margin: 0;
@@ -17,12 +19,20 @@
         }
 
         .sidebar {
-            width: 220px;
+            width: 250px;
             background-color: #007BFF;
             color: white;
             height: 100vh;
             padding-top: 20px;
             position: fixed;
+            text-align: center;
+        }
+
+        .sidebar img {
+            display: block;
+            margin: 0 auto 30px;
+            max-width: 150px;
+            height: auto;
         }
 
         .sidebar a {
@@ -30,11 +40,18 @@
             color: white;
             padding: 12px 20px;
             text-decoration: none;
+            transition: background-color 0.2s ease;
         }
 
         .sidebar a:hover {
             background-color: #0056b3;
         }
+
+        .sidebar a.active {
+            background-color: #0056b3;
+            font-weight: bold;
+        }
+
 
         .main {
             margin-left: 220px;
@@ -46,36 +63,18 @@
         }
 
         .navbar {
-            background-color: #ffffff;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .navbar .nav-links a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
-        }
-
-        .logout-button {
-            background-color: #dc3545;
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            background-color: transparent;
         }
 
         .card {
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            max-width: 600px;
+            padding: 25px 40px;
+            max-width: 900px;
             margin: auto;
         }
 
@@ -84,11 +83,17 @@
             color: white;
             padding: 15px;
             border-radius: 6px 6px 0 0;
+            font-size: 1.3rem;
         }
 
         .card-body h5 {
             margin-bottom: 5px;
             color: #007BFF;
+        }
+
+        .dato-perfil {
+            font-size: 20px;
+            font-weight: bold;
         }
 
         .btn {
@@ -105,15 +110,17 @@
             color: white;
         }
 
-        .btn-outline-primary {
-            border: 2px solid #007BFF;
-            color: #007BFF;
-            background-color: transparent;
+        .logout-button {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .btn-outline-primary:hover {
-            background-color: #007BFF;
-            color: white;
+        .logout-button:hover {
+            background-color: #c82333;
         }
 
         .text-center {
@@ -135,37 +142,47 @@
             background-color: #dc3545;
             color: white;
         }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .col-md-6 {
+            width: 48%;
+        }
     </style>
 </head>
 <body>
-    <!-- Barra lateral -->
-    <div class="sidebar">
-        <h3 style="text-align: center;">Gestper</h3>
-        <a href="/Perfil">Perfil</a>
-        <a href="/Ticket">Ticket</a>
-        <a href="/Ticket/Lista">Lista de Ticket</a>
-    </div>
+<div class="sidebar">
+    <img src="~/images/logo.png" alt="Logo Gestper" />
+    <a href="/CRUD/Perfil">Perfil</a>
+    <a asp-controller="Ticket" asp-action="Create">Creacion de Ticket</a>
+    <a asp-controller="CRUD" asp-action="TicketsCreados">Lista de mis Tickets</a>
+</div>
 
-    <!-- Contenido principal -->
+
     <div class="main">
-        <!-- Navbar superior -->
         <div class="navbar">
-            <div class="nav-links">
-                <a href="/Perfil">Perfil</a>
-                <a href="/Ticket">Ticket</a>
-                <a href="/Ticket/Lista">Lista de Ticket</a>
-            </div>
             <form method="post" asp-controller="Usuario" asp-action="CerrarSesion">
                 <button type="submit" class="logout-button">Cerrar sesión</button>
             </form>
         </div>
 
-        <!-- Contenido de perfil -->
-        <h2>Mi Perfil</h2>
+        <h2 class="text-center fw-bold mb-4" style="font-size: 2.2rem; color: #343a40;">
+            <i class="bi bi-person-badge"></i> Mi Perfil
+        </h2>
 
-        <div class="card">
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="alert alert-success text-center fw-semibold">
+                @TempData["MensajeExito"]
+            </div>
+        }
+
+        <div class="card" id="vistaPerfil">
             <div class="card-header">
-                <h2>Información Personal</h2>
+                Información Personal
             </div>
             <div class="card-body">
                 <div class="text-center mb-4">
@@ -186,30 +203,41 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h5>Nombre</h5>
-                        <p>@Model.Nombre</p>
+                        <p class="dato-perfil">@Model.Nombre</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <h5>Apellido</h5>
-                        <p>@Model.Apellido</p>
+                        <p class="dato-perfil">@Model.Apellido</p>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h5>Correo Electrónico</h5>
-                        <p>@Model.Correo</p>
+                        <p class="dato-perfil">@Model.Correo</p>
                     </div>
                     <div class="col-md-6 mb-3">
                         <h5>Teléfono</h5>
-                        <p>@Model.Telefono</p>
+                        <p class="dato-perfil">@Model.Telefono</p>
                     </div>
                 </div>
 
                 <div class="text-center mt-3">
-                    <a href="/Perfil/Editar" class="btn btn-primary">Editar Perfil</a>
+                    <button onclick="mostrarEditar()" class="btn btn-primary">Editar Perfil</button>
                 </div>
             </div>
         </div>
+
+        <div id="editarPerfil" style="display:none;">
+            @await Html.PartialAsync("~/Views/Perfil/Editar.cshtml", Model)
+        </div>
     </div>
+
+    <script>
+        function mostrarEditar() {
+            document.getElementById('vistaPerfil').style.display = 'none';
+            document.getElementById('editarPerfil').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
